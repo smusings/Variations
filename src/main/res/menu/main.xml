@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.smusing.variations.variations.MainActivity" >
+    <item android:id="@+id/about"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/about"/>
+</menu>
