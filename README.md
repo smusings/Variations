@@ -7,7 +7,8 @@ eat near you.
 
 
 
-//TODO//
+**TODO**
+
 1. Search
 2. Refresh Button
 3. Display of cuisine type
