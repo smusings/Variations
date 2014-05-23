@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.smusing.variations.variations.MainActivity" >
     <item android:id="@+id/about"
-        android:icon="@drawable/ic_launcher"
         android:title="@string/about"/>
+    <item
+        android:id="@+id/refresh"
+        android:title="Refresh"/>
 </menu>

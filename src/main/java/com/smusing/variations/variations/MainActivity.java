@@ -7,10 +7,12 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,12 +45,36 @@ public class MainActivity extends LocationSetUp{
                 locationListener);
 
         //ask for all places within the nearest x meters.
-        Query q=new Query()
-                .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
-                .sortAsc("$distance")
-                .only("name","price")
-                .limit(25);
-        task.execute(q);
+        if (l !=null){
+            Query q = new Query()
+                    .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                    .sortAsc("$distance")
+                    .only("name", "price")
+                    .limit(25);
+            task.execute(q);
+        } else {
+            EditText em=(EditText) findViewById(R.id.display_error);
+            String s="Please Turn on your Location Services"+
+                    "\n and hit refresh after a few seconds";
+
+            ArrayList<String> array=new ArrayList<String>();
+            array.add(s);
+            final ListView lView = (ListView) findViewById(R.id.display_messages);
+            lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
+
+        }
+    }
+
+    public void onLocationChanged(Location l){
+        FactualRetrievalTask task=new FactualRetrievalTask();
+        if (l !=null){
+            Query q = new Query()
+                    .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                    .sortAsc("$distance")
+                    .only("name", "price")
+                    .limit(25);
+            task.execute(q);
+        }
     }
 
     private class FactualRetrievalTask extends AsyncTask<Query, Integer, List<ReadResponse>> {
@@ -123,6 +149,39 @@ public class MainActivity extends LocationSetUp{
                     startActivity(intent);
                 }
             });
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.refresh:
+                LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+                String provider=locationManager.getBestProvider(newCriteria(), true);
+                Location l = locationManager.getLastKnownLocation(provider);
+                locationManager.requestLocationUpdates(provider, 2000, 10,
+                        locationListener);
+                FactualRetrievalTask task=new FactualRetrievalTask();
+                if (l !=null){
+                Query q = new Query()
+                        .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                        .sortAsc("$distance")
+                        .only("name", "price")
+                        .limit(25);
+                task.execute(q);
+            } else {
+                    EditText em=(EditText) findViewById(R.id.display_error);
+                    String s="Please Turn on your Location Services"+
+                            "\n and hit refresh after a few seconds";
+
+                    ArrayList<String> array=new ArrayList<String>();
+                    array.add(s);
+                    final ListView lView = (ListView) findViewById(R.id.display_messages);
+                    lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
+
+                }
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
