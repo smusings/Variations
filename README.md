@@ -9,6 +9,11 @@ eat near you.
 
 **TODO**
 
-1. Search
-2. Refresh Button
-3. Display of cuisine type
+1. Display of Cuisine Type
+2. Fix up UI
+
+**Done**
+
+1. Added a refresh button
+2. Added a search button
+3. Fixed Error with Galaxy S5 crashing on start

@@ -1,5 +1,6 @@
 package com.smusing.variations.variations;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -7,13 +8,15 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.factual.driver.Circle;
@@ -53,7 +56,6 @@ public class MainActivity extends LocationSetUp{
                     .limit(25);
             task.execute(q);
         } else {
-            EditText em=(EditText) findViewById(R.id.display_error);
             String s="Please Turn on your Location Services"+
                     "\n and hit refresh after a few seconds";
 
@@ -153,15 +155,36 @@ public class MainActivity extends LocationSetUp{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        //the set up needed
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        String provider=locationManager.getBestProvider(newCriteria(), true);
+        Location l = locationManager.getLastKnownLocation(provider);
+        locationManager.requestLocationUpdates(provider, 2000, 10,
+                locationListener);
+        FactualRetrievalTask task=new FactualRetrievalTask();
+
         switch (item.getItemId()){
             case R.id.refresh:
-                LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-                String provider=locationManager.getBestProvider(newCriteria(), true);
-                Location l = locationManager.getLastKnownLocation(provider);
-                locationManager.requestLocationUpdates(provider, 2000, 10,
-                        locationListener);
-                FactualRetrievalTask task=new FactualRetrievalTask();
+
                 if (l !=null){
                 Query q = new Query()
                         .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
@@ -170,7 +193,6 @@ public class MainActivity extends LocationSetUp{
                         .limit(25);
                 task.execute(q);
             } else {
-                    EditText em=(EditText) findViewById(R.id.display_error);
                     String s="Please Turn on your Location Services"+
                             "\n and hit refresh after a few seconds";
 
