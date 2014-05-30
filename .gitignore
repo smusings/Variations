@@ -1,8 +1,0 @@
-/build
-.gradle
-/local.properties
-/.idea/workspace.xml
-.DS_Store
-ic_launcher-web.png
-.gitignore
-proguard-rules.txt
