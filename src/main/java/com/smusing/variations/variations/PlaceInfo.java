@@ -48,8 +48,8 @@ public class PlaceInfo extends LocationSetUp {
                 .field("name").isEqual(message)
                 .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                 .sortAsc("$distance")
-                .only("name", "address", "tel", "latitude", "longitude")
-                .limit(15);
+                .only("name", "address", "tel", "website", "latitude", "longitude")
+                .limit(25);
         task.execute(q);
     }
 
@@ -84,17 +84,23 @@ public class PlaceInfo extends LocationSetUp {
                     final String name = (String) restaurant.get("name");
                     final String address = (String) restaurant.get("address");
                     final String phone = (String) restaurant.get("tel");
+                    final String website=(String) restaurant.get("website");
                     lname.add(name);
                     if (phone != null && !phone.isEmpty()) {
                         if (address != null && !address.isEmpty()) {
-                           list.add("Phone Number: " + phone + "\nAddress: " + address);
+                            if (website !=null && !website.isEmpty()){
+                                list.add("Phone Number: " + phone + "\nAddress: " + address+"\nWebsite: "+website);
+                            }
+                            else {
+                                list.add("Phone Number: " + phone + "\nAddress: " + address + "\nWebsite: None Listed");
+                            }
                         }
                         else {
-                            list.add("Phone Number: " + phone + "\nAddress: None listed");
+                            list.add("Phone Number: " + phone + "\nAddress: None listed"+ "\nWebsite: None Listed");
                         }
                     }
                     else {
-                        list.add("Phone Number: None listed." + "\nAddress: None listed");
+                        list.add("Phone Number: None listed." + "\nAddress: None listed"+ "\nWebsite: None Listed");
                     }
 
                     final String[] array=new String[list.size()];

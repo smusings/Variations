@@ -24,6 +24,8 @@ import com.factual.driver.Query;
 import com.factual.driver.ReadResponse;
 import com.google.api.client.util.Lists;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class MainActivity extends LocationSetUp{
             Query q = new Query()
                     .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                     .sortAsc("$distance")
-                    .only("name", "price")
+                    .only("name", "address", "cuisine")
                     .limit(25);
             task.execute(q);
         } else {
@@ -73,7 +75,7 @@ public class MainActivity extends LocationSetUp{
             Query q = new Query()
                     .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                     .sortAsc("$distance")
-                    .only("name", "price")
+                    .only("name", "address", "cuisine")
                     .limit(25);
             task.execute(q);
         }
@@ -100,12 +102,18 @@ public class MainActivity extends LocationSetUp{
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
                     String name = (String) restaurant.get("name");
-                    Number price = (Number) restaurant.get("price");
+                    String address = (String) restaurant.get("address");
+                    JSONArray cusine=(JSONArray) restaurant.get("cuisine");
                     lname.add(name);
-                    if (price != null) {
-                        list.add("Price: " + price);
+                    if (address != null) {
+                        if (cusine != null) {
+                            list.add("Closest Address: " + address+"\nCuisine: "+cusine.toString());
+                        }
+                        else {
+                            list.add("Closest Address: " + address + "\nCuisine: Not Listed");
+                        }
                     } else {
-                        list.add("Price: Not Listed");
+                        list.add("Closest Address: Not Listed"+"\nCuisine: Not Listed");
                     }
                 }
             }
@@ -189,7 +197,7 @@ public class MainActivity extends LocationSetUp{
                 Query q = new Query()
                         .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                         .sortAsc("$distance")
-                        .only("name", "price")
+                        .only("name", "address", "cuisine")
                         .limit(25);
                 task.execute(q);
             } else {
