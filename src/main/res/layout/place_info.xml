@@ -13,11 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/maps"
-        android:onClick="viewMap"/>
+        android:onClick="viewMap"
+        android:textColor="@color/White"
+        android:background="@color/DarkGreen"
+        android:layout_margin="5dp"/>
     <ListView
         android:id="@+id/display_name"
         android:text="@string/hello_world"
         android:layout_width="wrap_content"
-        android:background="@color/Snow"
+        android:background="@color/White"
         android:layout_height="wrap_content"/>
 </LinearLayout>

@@ -25,13 +25,14 @@ import com.factual.driver.ReadResponse;
 import com.google.api.client.util.Lists;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends LocationSetUp{
+public class MainActivity extends LocationSetUp {
     public final static String EXTRA_MESSAGE = "com.smusing.variations.variations.OBJ";
 
     @Override
@@ -40,17 +41,17 @@ public class MainActivity extends LocationSetUp{
         setContentView(R.layout.activity_main);
 
         //set up Factual
-        FactualRetrievalTask task=new FactualRetrievalTask();
+        FactualRetrievalTask task = new FactualRetrievalTask();
 
         //set up location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider=locationManager.getBestProvider(newCriteria(), true);
+        String provider = locationManager.getBestProvider(newCriteria(), true);
         Location l = locationManager.getLastKnownLocation(provider);
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
 
         //ask for all places within the nearest x meters.
-        if (l !=null){
+        if (l != null) {
             Query q = new Query()
                     .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                     .sortAsc("$distance")
@@ -58,10 +59,10 @@ public class MainActivity extends LocationSetUp{
                     .limit(25);
             task.execute(q);
         } else {
-            String s="Please Turn on your Location Services"+
+            String s = "Please Turn on your Location Services" +
                     "\n and hit refresh after a few seconds";
 
-            ArrayList<String> array=new ArrayList<String>();
+            ArrayList<String> array = new ArrayList<String>();
             array.add(s);
             final ListView lView = (ListView) findViewById(R.id.display_messages);
             lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
@@ -69,9 +70,9 @@ public class MainActivity extends LocationSetUp{
         }
     }
 
-    public void onLocationChanged(Location l){
-        FactualRetrievalTask task=new FactualRetrievalTask();
-        if (l !=null){
+    public void onLocationChanged(Location l) {
+        FactualRetrievalTask task = new FactualRetrievalTask();
+        if (l != null) {
             Query q = new Query()
                     .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                     .sortAsc("$distance")
@@ -98,27 +99,41 @@ public class MainActivity extends LocationSetUp{
         @Override
         protected void onPostExecute(List<ReadResponse> responses) {
             final ArrayList<String> list = new ArrayList<String>();
-            final ArrayList<String> lname=new ArrayList<String>();
+            final ArrayList<String> lname = new ArrayList<String>();
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
                     String name = (String) restaurant.get("name");
                     String address = (String) restaurant.get("address");
-                    JSONArray cusine=(JSONArray) restaurant.get("cuisine");
+                    JSONArray cusine = (JSONArray) restaurant.get("cuisine");
+
+                    ArrayList<String> cuisine = new ArrayList<String>();
+                    if (cusine != null) {
+                        int len = cusine.length();
+                        for (int i = 0; i < len; i++) {
+                            try {
+                                cuisine.add(cusine.get(i).toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    String skr=cuisine.toString().replace("[","").replace("]","");
+
                     lname.add(name);
                     if (address != null) {
                         if (cusine != null) {
-                            list.add("Closest Address: " + address+"\nCuisine: "+cusine.toString());
-                        }
-                        else {
+                            list.add("Closest Address: " + address + "\nCuisine: " + skr);
+                        } else {
                             list.add("Closest Address: " + address + "\nCuisine: Not Listed");
                         }
                     } else {
-                        list.add("Closest Address: Not Listed"+"\nCuisine: Not Listed");
+                        list.add("Closest Address: Not Listed" + "\nCuisine: Not Listed");
                     }
                 }
             }
-            final String[] array=new String[list.size()];
-            final String[] nArray=new String[lname.size()];
+
+            final String[] array = new String[list.size()];
+            final String[] nArray = new String[lname.size()];
 
             list.toArray(array);
             lname.toArray(nArray);
@@ -133,11 +148,11 @@ public class MainActivity extends LocationSetUp{
 
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
-                    LayoutInflater inflater=(LayoutInflater)context.
+                    LayoutInflater inflater = (LayoutInflater) context.
                             getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View rView=inflater.inflate(R.layout.row, parent, false);
-                    TextView textView=(TextView) rView.findViewById(R.id.secondLine);
-                    TextView tView=(TextView) rView.findViewById(R.id.thirdLine);
+                    View rView = inflater.inflate(R.layout.row, parent, false);
+                    TextView textView = (TextView) rView.findViewById(R.id.secondLine);
+                    TextView tView = (TextView) rView.findViewById(R.id.thirdLine);
                     textView.setText(nArray[position]);
                     tView.setText(array[position]);
                     return rView;
@@ -152,9 +167,9 @@ public class MainActivity extends LocationSetUp{
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    Object obj=nArray[position];
+                    Object obj = nArray[position];
 
-                    Intent intent= new Intent(MainActivity.this, PlaceInfo.class);
+                    Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
                     intent.putExtra(EXTRA_MESSAGE, obj.toString());
                     startActivity(intent);
                 }
@@ -184,27 +199,27 @@ public class MainActivity extends LocationSetUp{
 
         //the set up needed
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider=locationManager.getBestProvider(newCriteria(), true);
+        String provider = locationManager.getBestProvider(newCriteria(), true);
         Location l = locationManager.getLastKnownLocation(provider);
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
-        FactualRetrievalTask task=new FactualRetrievalTask();
+        FactualRetrievalTask task = new FactualRetrievalTask();
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.refresh:
 
-                if (l !=null){
-                Query q = new Query()
-                        .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
-                        .sortAsc("$distance")
-                        .only("name", "address", "cuisine")
-                        .limit(25);
-                task.execute(q);
-            } else {
-                    String s="Please Turn on your Location Services"+
+                if (l != null) {
+                    Query q = new Query()
+                            .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                            .sortAsc("$distance")
+                            .only("name", "address", "cuisine")
+                            .limit(25);
+                    task.execute(q);
+                } else {
+                    String s = "Please Turn on your Location Services" +
                             "\n and hit refresh after a few seconds";
 
-                    ArrayList<String> array=new ArrayList<String>();
+                    ArrayList<String> array = new ArrayList<String>();
                     array.add(s);
                     final ListView lView = (ListView) findViewById(R.id.display_messages);
                     lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
