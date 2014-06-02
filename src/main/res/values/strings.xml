@@ -12,6 +12,8 @@
     <string name="about">About</string>
     <string name="search">Search</string>
     <string name="enter">Enter</string>
+    <string name="ads"><b>Closest Address: </b></string>
+    <string name="cus"><b>Cuisine: </b></string>
 
 
     <string name="title_activity_dialog_location">DialogLocation</string>

@@ -5,10 +5,10 @@
     android:layout_height="match_parent">
     <ListView
         android:id="@+id/search_results"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:autoLink="phone"
-        android:background="@color/Snow"
+        android:background="@color/GhostWhite"
         android:linksClickable="true"/>
 
 </LinearLayout>

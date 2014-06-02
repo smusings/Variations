@@ -44,15 +44,17 @@ public class PlaceInfo extends LocationSetUp {
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
+        //query, simple because MainActivity already checks for location as it is
         Query q = new Query()
                 .field("name").isEqual(message)
                 .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                 .sortAsc("$distance")
-                .only("name", "address", "tel", "website", "latitude", "longitude")
+                .only("name", "address","address_extended", "tel", "website")
                 .limit(25);
         task.execute(q);
     }
 
+    //view map intent to send the intent from MainActivity to PlaceMaps (Look for a better way!)
     public void viewMap(View view){
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
@@ -62,6 +64,7 @@ public class PlaceInfo extends LocationSetUp {
     }
 
     protected class FactualRetrievalTask extends AsyncTask<Query, Integer, List<ReadResponse>> {
+        //returns results of query
         @Override
         protected List<ReadResponse> doInBackground(Query... params) {
             List<ReadResponse> results = Lists.newArrayList();
@@ -75,34 +78,39 @@ public class PlaceInfo extends LocationSetUp {
         protected void onProgressUpdate(Integer... progress) {
         }
 
+        //binds results to an array to a list view
         @Override
         protected void onPostExecute(List<ReadResponse> responses) {
             final ArrayList<String> list=new ArrayList<String>();
             final ArrayList<String> lname=new ArrayList<String>();
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
+                    //String set up
                     final String name = (String) restaurant.get("name");
-                    final String address = (String) restaurant.get("address");
+                    final String address=(String) restaurant.get("address");
+                    final String addresse = (String) restaurant.get("address_extended");
                     final String phone = (String) restaurant.get("tel");
                     final String website=(String) restaurant.get("website");
                     lname.add(name);
+                    //logic to display results
                     if (phone != null && !phone.isEmpty()) {
                         if (address != null && !address.isEmpty()) {
-                            if (website !=null && !website.isEmpty()){
-                                list.add("Phone Number: " + phone + "\nAddress: " + address+"\nWebsite: "+website);
-                            }
-                            else {
+                            if (addresse!=null && !address.isEmpty()) {
+                                if (website != null && !website.isEmpty()) {
+                                    list.add("Phone Number: " + phone + "\nAddress: " + address +", "+ addresse + "\nWebsite: " + website);
+                                } else {
+                                    list.add("Phone Number: " + phone + "\nAddress: " + address + addresse+"\nWebsite: None Listed");
+                                }
+                            } else {
                                 list.add("Phone Number: " + phone + "\nAddress: " + address + "\nWebsite: None Listed");
                             }
-                        }
-                        else {
+                        } else {
                             list.add("Phone Number: " + phone + "\nAddress: None listed"+ "\nWebsite: None Listed");
                         }
-                    }
-                    else {
+                    } else {
                         list.add("Phone Number: None listed." + "\nAddress: None listed"+ "\nWebsite: None Listed");
                     }
-
+                    //set up to bind results to array to listview
                     final String[] array=new String[list.size()];
                     final String[] nArray=new String[lname.size()];
 

@@ -16,9 +16,11 @@ import com.factual.driver.Factual;
 
 public class LocationSetUp extends Activity {
 
-    Factual factual = new Factual("Your Key here",
-            "your secret here");
+    //Enables Factual
+    Factual factual = new Factual("key here",
+            "secret here");
 
+    //Set up for GPS
     public Criteria newCriteria(){
         Criteria c = new Criteria();
         c.setAccuracy(Criteria.ACCURACY_FINE);
@@ -53,7 +55,7 @@ public class LocationSetUp extends Activity {
 
 
 
-
+    //Set up for Menu everywhere but Main Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
