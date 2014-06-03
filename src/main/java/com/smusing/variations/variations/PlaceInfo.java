@@ -49,7 +49,7 @@ public class PlaceInfo extends LocationSetUp {
                 .field("name").isEqual(message)
                 .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                 .sortAsc("$distance")
-                .only("name", "address","address_extended", "tel", "website")
+                .only("name", "address","address_extended", "locality", "region", "postcode", "tel", "website")
                 .limit(25);
         task.execute(q);
     }
@@ -91,18 +91,24 @@ public class PlaceInfo extends LocationSetUp {
                     final String addresse = (String) restaurant.get("address_extended");
                     final String phone = (String) restaurant.get("tel");
                     final String website=(String) restaurant.get("website");
+                    final String locality=(String) restaurant.get("locality");
+                    final String zip=(String) restaurant.get("postcode");
+                    final String state=(String) restaurant.get("region");
                     lname.add(name);
                     //logic to display results
                     if (phone != null && !phone.isEmpty()) {
                         if (address != null && !address.isEmpty()) {
                             if (addresse!=null && !address.isEmpty()) {
                                 if (website != null && !website.isEmpty()) {
-                                    list.add("Phone Number: " + phone + "\nAddress: " + address +", "+ addresse + "\nWebsite: " + website);
+                                    list.add("Phone Number: " + phone + "\nAddress: " + address +", "+ addresse
+                                            + ", "+locality+ ", "+ state+ " " + zip+ "\nWebsite: " + website);
                                 } else {
-                                    list.add("Phone Number: " + phone + "\nAddress: " + address + addresse+"\nWebsite: None Listed");
+                                    list.add("Phone Number: " + phone + "\nAddress: " + address +" "+ addresse
+                                            + ", "+locality+ ", "+ state+ " " + zip+"\nWebsite: None Listed");
                                 }
                             } else {
-                                list.add("Phone Number: " + phone + "\nAddress: " + address + "\nWebsite: None Listed");
+                                list.add("Phone Number: " + phone + "\nAddress: " + address
+                                        + ", "+locality+ ", "+ state+ " " + zip+ "\nWebsite: None Listed");
                             }
                         } else {
                             list.add("Phone Number: " + phone + "\nAddress: None listed"+ "\nWebsite: None Listed");
