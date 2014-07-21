@@ -120,7 +120,6 @@ public class PlaceInfo extends LocationSetUp {
                     final String[] array=new String[list.size()];
                     final String[] nArray=new String[lname.size()];
 
-
                     list.toArray(array);
                     lname.toArray(nArray);
 

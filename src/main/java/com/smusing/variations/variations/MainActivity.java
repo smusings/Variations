@@ -69,6 +69,8 @@ public class MainActivity extends LocationSetUp {
 
         }
     }
+
+
     //Location changed checker
     public void onLocationChanged(Location l) {
         FactualRetrievalTask task = new FactualRetrievalTask();
@@ -172,11 +174,30 @@ public class MainActivity extends LocationSetUp {
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    Object obj = nArray[position];
 
-                    Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
-                    intent.putExtra(EXTRA_MESSAGE, obj.toString());
-                    startActivity(intent);
+                    LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    String provider = locationManager.getBestProvider(newCriteria(), true);
+                    Location l = locationManager.getLastKnownLocation(provider);
+                    locationManager.requestLocationUpdates(provider, 2000, 10,
+                            locationListener);
+
+                    if (l !=null) {
+                        Object obj = nArray[position];
+
+                        Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
+                        intent.putExtra(EXTRA_MESSAGE, obj.toString());
+                        startActivity(intent);
+                    }else if (l == null){
+
+                        String s = "Please Turn on your Location Services" +
+                                "\n and hit refresh after a few seconds";
+
+                        ArrayList<String> array = new ArrayList<String>();
+                        array.add(s);
+                        final ListView lView = (ListView) findViewById(R.id.display_messages);
+                        lView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, array));
+
+                    }
                 }
             });
         }
@@ -202,7 +223,6 @@ public class MainActivity extends LocationSetUp {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         //Location setup
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManager.getBestProvider(newCriteria(), true);
@@ -229,7 +249,6 @@ public class MainActivity extends LocationSetUp {
                     array.add(s);
                     final ListView lView = (ListView) findViewById(R.id.display_messages);
                     lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
-
                 }
             default:
                 return super.onOptionsItemSelected(item);

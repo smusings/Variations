@@ -6,7 +6,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Window;
 
 import com.factual.driver.Circle;
 import com.factual.driver.Query;
@@ -30,7 +29,6 @@ public class PlaceMaps extends LocationSetUp {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //turn off the Variations actionbar
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_place_info);
 
@@ -55,7 +53,7 @@ public class PlaceMaps extends LocationSetUp {
                 .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
                 .sortAsc("$distance")
                 .only("name", "address", "tel","address_extended", "latitude", "longitude")
-                .limit(15);
+                .limit(25);
         task.execute(q);
 
         //sets up your current location

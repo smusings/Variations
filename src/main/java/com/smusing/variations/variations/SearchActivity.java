@@ -172,11 +172,28 @@ public class SearchActivity extends LocationSetUp {
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
+
+                    LocationManager locationManager = (LocationManager) SearchActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                    String provider = locationManager.getBestProvider(newCriteria(), true);
+                    Location l = locationManager.getLastKnownLocation(provider);
+                    locationManager.requestLocationUpdates(provider, 2000, 10,
+                            locationListener);
+
+                    if (l !=null){
                     Object obj = nArray[position];
 
                     Intent intent = new Intent(SearchActivity.this, PlaceInfo.class);
                     intent.putExtra(EXTRA_MESSAGE, obj.toString());
                     startActivity(intent);
+                }else if (l == null){
+                        String s = "Please Turn on your Location Services" +
+                                "\n and hit refresh after a few seconds";
+
+                        ArrayList<String> array = new ArrayList<String>();
+                        array.add(s);
+                        final ListView lView = (ListView) findViewById(R.id.search_results);
+                        lView.setAdapter(new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, array));
+                    }
                 }
             });
         }

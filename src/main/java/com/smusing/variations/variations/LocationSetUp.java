@@ -17,8 +17,8 @@ import com.factual.driver.Factual;
 public class LocationSetUp extends Activity {
 
     //Enables Factual
-    Factual factual = new Factual("Key",
-            "Secret");
+    Factual factual = new Factual("43dV1HGnOKhXRDDsq0H748SqzfMwJfs5hSOLtJiR",
+            "ohuRFHk6l1lRCO7RfoBXw1aHpa0NLH5AUVdXk1Dc");
 
     //Set up for GPS
     public Criteria newCriteria(){
@@ -52,8 +52,6 @@ public class LocationSetUp extends Activity {
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
     };
-
-
 
     //Set up for Menu everywhere but Main Activity
     @Override
