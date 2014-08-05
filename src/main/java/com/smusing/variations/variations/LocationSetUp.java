@@ -17,8 +17,8 @@ import com.factual.driver.Factual;
 public class LocationSetUp extends Activity {
 
     //Enables Factual
-    Factual factual = new Factual("43dV1HGnOKhXRDDsq0H748SqzfMwJfs5hSOLtJiR",
-            "ohuRFHk6l1lRCO7RfoBXw1aHpa0NLH5AUVdXk1Dc");
+    Factual factual = new Factual("insert key here",
+            "insert key here");
 
     //Set up for GPS
     public Criteria newCriteria(){

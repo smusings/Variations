@@ -82,7 +82,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyC9lIL9r9G8AlHZY4LnXiRxsiA6sbI15Ys" />
+            android:value="insert key here" />
         <meta-data android:name="android.app.default_searchable"
             android:value=".SearchActivity" />
 
