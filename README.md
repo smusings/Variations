@@ -5,15 +5,4 @@ are sorted from closes to farthest.
 Variations can provide you with location, distance to, and phone numbers of the places to 
 eat near you. 
 
-
-
-**TODO**
-
-1. Display of Cuisine Type
-2. Fix up UI
-
-**Done**
-
-1. Added a refresh button
-2. Added a search button
-3. Fixed Error with Galaxy S5 crashing on start
+Variations was primarily an experiment for working with APIs.
