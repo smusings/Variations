@@ -3,8 +3,6 @@ package com.smusing.variations.variations;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,6 +27,8 @@ import java.util.Map;
 
 public class SearchActivity extends LocationSetUp {
     public final static String EXTRA_MESSAGE = "com.smusing.variations.variations.OBJ";
+
+    ListView lView;
 
     //Handle the intent received from the search
     @Override
@@ -55,9 +55,6 @@ public class SearchActivity extends LocationSetUp {
             FactualRetrievalTask task = new FactualRetrievalTask();
 
             //set up location
-            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            String provider = locationManager.getBestProvider(newCriteria(), true);
-            Location l = locationManager.getLastKnownLocation(provider);
             locationManager.requestLocationUpdates(provider, 2000, 10,
                     locationListener);
 
@@ -71,13 +68,9 @@ public class SearchActivity extends LocationSetUp {
                         .limit(25);
                 task.execute(q);
             } else {
-                String s = "Please Turn on your Location Services" +
-                        "\n and hit refresh after a few seconds";
-
-                ArrayList<String> array = new ArrayList<String>();
-                array.add(s);
-                final ListView lView = (ListView) findViewById(R.id.search_results);
-                lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
+                failsafe.add(s);
+                lView = (ListView) findViewById(R.id.search_results);
+                lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, failsafe));
             }
         }
     }
@@ -165,34 +158,26 @@ public class SearchActivity extends LocationSetUp {
             }
 
             //setting it up to show results
-            final ListView lView = (ListView) findViewById(R.id.search_results);
+            lView = (ListView) findViewById(R.id.search_results);
             lView.setAdapter(new MySimpleArrayAdapter(SearchActivity.this, array));
 
             //setting it up for more info
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-
-                    LocationManager locationManager = (LocationManager) SearchActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                    String provider = locationManager.getBestProvider(newCriteria(), true);
-                    Location l = locationManager.getLastKnownLocation(provider);
                     locationManager.requestLocationUpdates(provider, 2000, 10,
                             locationListener);
 
                     if (l !=null){
-                    Object obj = nArray[position];
+                        Object obj = nArray[position];
 
-                    Intent intent = new Intent(SearchActivity.this, PlaceInfo.class);
-                    intent.putExtra(EXTRA_MESSAGE, obj.toString());
-                    startActivity(intent);
-                }else if (l == null){
-                        String s = "Please Turn on your Location Services" +
-                                "\n and hit refresh after a few seconds";
-
-                        ArrayList<String> array = new ArrayList<String>();
-                        array.add(s);
-                        final ListView lView = (ListView) findViewById(R.id.search_results);
-                        lView.setAdapter(new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, array));
+                        Intent intent = new Intent(SearchActivity.this, PlaceInfo.class);
+                        intent.putExtra(EXTRA_MESSAGE, obj.toString());
+                        startActivity(intent);
+                    }else{
+                        failsafe.add(s);
+                        lView = (ListView) findViewById(R.id.search_results);
+                        lView.setAdapter(new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, failsafe));
                     }
                 }
             });

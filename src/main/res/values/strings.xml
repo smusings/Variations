@@ -10,10 +10,12 @@
     <string name="action_settings">Settings</string>
     <string name="maps">View Map</string>
     <string name="about">About</string>
+    <string name="refresh">Refresh</string>
     <string name="search">Search</string>
     <string name="enter">Enter</string>
     <string name="ads"><b>Closest Address: </b></string>
     <string name="cus"><b>Cuisine: </b></string>
+    <string name="location_off">Please Turn on your Location Services, and hit refresh after a few seconds</string>
 
 
     <string name="title_activity_dialog_location">DialogLocation</string>

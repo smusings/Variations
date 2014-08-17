@@ -14,13 +14,27 @@ import android.view.MenuItem;
 
 import com.factual.driver.Factual;
 
+import java.util.ArrayList;
+
 public class LocationSetUp extends Activity {
 
-    //Enables Factual
-    Factual factual = new Factual("insert key here",
-            "insert key here");
+    /*
+        enables location for activities
+        sets up the LocationManager and the services
+        then we get the best provider (GPS, provider, etc)
+        then we define location so we can use it in methods that dont call for it specifically
+    */
+    LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    String provider = locationManager.getBestProvider(newCriteria(), true);
+    Location l = locationManager.getLastKnownLocation(provider);
 
-    //Set up for GPS
+    //Enables Factual
+    Factual factual = new Factual("",
+            "");
+
+    /*
+        Uses the following criteria to decide what the best Location Provider is
+    */
     public Criteria newCriteria(){
         Criteria c = new Criteria();
         c.setAccuracy(Criteria.ACCURACY_FINE);
@@ -52,6 +66,10 @@ public class LocationSetUp extends Activity {
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
     };
+
+    //failsafe if location services are not on
+    String s=getString(R.string.location_off);
+    ArrayList<String> failsafe = new ArrayList<String>();
 
     //Set up for Menu everywhere but Main Activity
     @Override

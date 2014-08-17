@@ -9,7 +9,6 @@
     android:background="@color/DarkCyan"
     tools:context="com.smusing.variations.variations.MainActivity">
     <ListView
-        android:layout_below="@+id/search"
         android:id="@+id/display_messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

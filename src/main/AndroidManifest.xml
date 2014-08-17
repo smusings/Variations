@@ -82,18 +82,10 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="insert key here" />
+            android:value="" />
         <meta-data android:name="android.app.default_searchable"
             android:value=".SearchActivity" />
 
-        <activity
-            android:name="com.smusing.variations.variations.LocationFragment"
-            android:label="@string/title_activity_location_fragment" >
-        </activity>
-        <activity
-            android:name="com.smusing.variations.variations.DialogLocation"
-            android:label="@string/title_activity_dialog_location" >
-        </activity>
     </application>
 
     <uses-feature

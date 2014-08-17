@@ -7,10 +7,10 @@
         android:title="@string/about"/>
     <item
         android:id="@+id/refresh"
-        android:title="Refresh"/>
+        android:title="@string/refresh"/>
     <item android:id="@+id/search"
         android:title="@string/search"
-        android:showAsAction="collapseActionView|ifRoom"
+        app:showAsAction="collapseActionView|ifRoom"
         android:actionViewClass="android.widget.SearchView" />
 
 </menu>

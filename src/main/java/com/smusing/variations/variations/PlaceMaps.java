@@ -1,9 +1,6 @@
 package com.smusing.variations.variations;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -39,9 +36,6 @@ public class PlaceMaps extends LocationSetUp {
         FactualRetrievalTask task=new FactualRetrievalTask();
 
         //set up location
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider=locationManager.getBestProvider(newCriteria(), true);
-        Location l = locationManager.getLastKnownLocation(provider);
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
 
@@ -69,8 +63,7 @@ public class PlaceMaps extends LocationSetUp {
         //set what the button does
         gmap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             public boolean onMyLocationButtonClick() {
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location l = locationManager.getLastKnownLocation(locationManager.PASSIVE_PROVIDER);
+
                 gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(CURRENT, (float) 14));
                 return true;
             }

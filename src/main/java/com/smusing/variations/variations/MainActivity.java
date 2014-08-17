@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +32,11 @@ import java.util.Map;
 
 
 public class MainActivity extends LocationSetUp {
+    //String to help intents send along info
     public final static String EXTRA_MESSAGE = "com.smusing.variations.variations.OBJ";
+
+
+    ListView lView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +46,11 @@ public class MainActivity extends LocationSetUp {
         //set up Factual Query
         FactualRetrievalTask task = new FactualRetrievalTask();
 
-        //set up location
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider = locationManager.getBestProvider(newCriteria(), true);
-        Location l = locationManager.getLastKnownLocation(provider);
+        //set up location update
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
 
-        //ask for all places within the nearest 5000 meters, with a built in Check for GPS turned on.
+        //ask for all places within the nearest 5000 meters, with a built in Check for Location Servicesturned on.
         if (l != null) {
             Query q = new Query()
                     .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
@@ -59,17 +59,12 @@ public class MainActivity extends LocationSetUp {
                     .limit(25);
             task.execute(q);
         } else {
-            String s = "Please Turn on your Location Services" +
-                    "\n and hit refresh after a few seconds";
-
-            ArrayList<String> array = new ArrayList<String>();
-            array.add(s);
-            final ListView lView = (ListView) findViewById(R.id.display_messages);
-            lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
+            failsafe.add(s);
+            lView = (ListView) findViewById(R.id.display_messages);
+            lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, failsafe));
 
         }
     }
-
 
     //Location changed checker
     public void onLocationChanged(Location l) {
@@ -84,7 +79,8 @@ public class MainActivity extends LocationSetUp {
         }
     }
 
-    //Performs the Query
+
+    //Performs the Query in the background
     private class FactualRetrievalTask extends AsyncTask<Query, Integer, List<ReadResponse>> {
         //performs the query itself
         @Override
@@ -100,19 +96,28 @@ public class MainActivity extends LocationSetUp {
         protected void onProgressUpdate(Integer... progress) {
         }
 
-        //tells the app what to show
+        /*
+            tells the app what to show
+            rather large so i want to take the time to explain what happens
+        */
         @Override
         protected void onPostExecute(List<ReadResponse> responses) {
+
+            //array for ALL the info
             final ArrayList<String> list = new ArrayList<String>();
+            //array for NAME only
             final ArrayList<String> lname = new ArrayList<String>();
+            //array for cuisine
+            final ArrayList<String> cuisine = new ArrayList<String>();
 
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
                     //the setup
                     String name = (String) restaurant.get("name");
                     String address = (String) restaurant.get("address");
+
+                    //the cuisine is in an array
                     JSONArray cusine = (JSONArray) restaurant.get("cuisine");
-                    ArrayList<String> cuisine = new ArrayList<String>();
                     if (cusine != null) {
                         int len = cusine.length();
                         for (int i = 0; i < len; i++) {
@@ -123,10 +128,13 @@ public class MainActivity extends LocationSetUp {
                             }
                         }
                     }
+                    //we break the cuisine format into a more readable format
                     String cuisine_string=cuisine.toString().replace("[","").replace("]","");
 
                     //logic and display
+                    //we only add name so we can later use this array to search for more info
                     lname.add(name);
+                    //set up a series of if/else because not all data will come back
                     if (address != null) {
                         if (cusine != null) {
                             list.add("Current Address: " + address + "\n"+"Cusine: " + cuisine_string);
@@ -142,6 +150,7 @@ public class MainActivity extends LocationSetUp {
             final String[] array = new String[list.size()];
             final String[] nArray = new String[lname.size()];
 
+            //put our ArrayList results into a StringArray
             list.toArray(array);
             lname.toArray(nArray);
 
@@ -175,9 +184,6 @@ public class MainActivity extends LocationSetUp {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-                    LocationManager locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-                    String provider = locationManager.getBestProvider(newCriteria(), true);
-                    Location l = locationManager.getLastKnownLocation(provider);
                     locationManager.requestLocationUpdates(provider, 2000, 10,
                             locationListener);
 
@@ -187,15 +193,10 @@ public class MainActivity extends LocationSetUp {
                         Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
                         intent.putExtra(EXTRA_MESSAGE, obj.toString());
                         startActivity(intent);
-                    }else if (l == null){
-
-                        String s = "Please Turn on your Location Services" +
-                                "\n and hit refresh after a few seconds";
-
-                        ArrayList<String> array = new ArrayList<String>();
-                        array.add(s);
+                    }else {
+                        failsafe.add(s);
                         final ListView lView = (ListView) findViewById(R.id.display_messages);
-                        lView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, array));
+                        lView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, failsafe));
 
                     }
                 }
@@ -221,14 +222,14 @@ public class MainActivity extends LocationSetUp {
     }
 
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //Location setup
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider = locationManager.getBestProvider(newCriteria(), true);
-        Location l = locationManager.getLastKnownLocation(provider);
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
+
         FactualRetrievalTask task = new FactualRetrievalTask();
 
         switch (item.getItemId()) {
@@ -242,13 +243,9 @@ public class MainActivity extends LocationSetUp {
                             .limit(25);
                     task.execute(q);
                 } else {
-                    String s = "Please Turn on your Location Services" +
-                            "\n and hit refresh after a few seconds";
-
-                    ArrayList<String> array = new ArrayList<String>();
-                    array.add(s);
-                    final ListView lView = (ListView) findViewById(R.id.display_messages);
-                    lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array));
+                    failsafe.add(s);
+                    lView = (ListView) findViewById(R.id.display_messages);
+                    lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, failsafe));
                 }
             default:
                 return super.onOptionsItemSelected(item);
