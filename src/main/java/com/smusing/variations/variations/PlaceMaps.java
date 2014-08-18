@@ -35,23 +35,20 @@ public class PlaceMaps extends LocationSetUp {
         //set up Factual
         FactualRetrievalTask task=new FactualRetrievalTask();
 
-        //set up location
-        locationManager.requestLocationUpdates(provider, 2000, 10,
-                locationListener);
 
         //ask for all places within the nearest 5000 meters.
         Intent intent = getIntent();
         String message = intent.getStringExtra(PlaceInfo.EXTRA_MESSAGE);
         Query q=new Query()
                 .field("name").isEqual(message)
-                .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))
                 .sortAsc("$distance")
                 .only("name", "address", "tel","address_extended", "latitude", "longitude")
                 .limit(25);
         task.execute(q);
 
         //sets up your current location
-        final LatLng CURRENT=new LatLng(l.getLatitude(), l.getLongitude());
+        final LatLng CURRENT=new LatLng(getLocation().getLatitude(), getLocation().getLongitude());
         gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(CURRENT, (float) 14));
 
         //enable location button

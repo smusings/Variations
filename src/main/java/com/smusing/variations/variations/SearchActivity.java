@@ -54,14 +54,11 @@ public class SearchActivity extends LocationSetUp {
 
             FactualRetrievalTask task = new FactualRetrievalTask();
 
-            //set up location
-            locationManager.requestLocationUpdates(provider, 2000, 10,
-                    locationListener);
 
             //ask for all places within the nearest x meters.
-            if (l != null) {
+            if (getLocation() != null) {
                 Query q = new Query()
-                        .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                        .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))
                         .sortAsc("$distance")
                         .search(query)
                         .only("name", "address", "cuisine")
@@ -165,10 +162,8 @@ public class SearchActivity extends LocationSetUp {
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-                    locationManager.requestLocationUpdates(provider, 2000, 10,
-                            locationListener);
 
-                    if (l !=null){
+                    if (getLocation() !=null){
                         Object obj = nArray[position];
 
                         Intent intent = new Intent(SearchActivity.this, PlaceInfo.class);

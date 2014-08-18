@@ -23,10 +23,24 @@ public class LocationSetUp extends Activity {
         sets up the LocationManager and the services
         then we get the best provider (GPS, provider, etc)
         then we define location so we can use it in methods that dont call for it specifically
+
+
     */
-    LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-    String provider = locationManager.getBestProvider(newCriteria(), true);
-    Location l = locationManager.getLastKnownLocation(provider);
+
+    public Location getLocation() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        String provider = locationManager.getBestProvider(newCriteria(), true);
+        Location l = locationManager.getLastKnownLocation(provider);
+        locationManager.requestLocationUpdates(provider, 2000, 10,
+                locationListener);
+
+
+        return l;
+    }
+    //failsafe if location services are not on
+    String s="Please Turn on your Location Services, and hit refresh after a few seconds";
+    ArrayList<String> failsafe = new ArrayList<String>();
+
 
     //Enables Factual
     Factual factual = new Factual("",
@@ -67,9 +81,7 @@ public class LocationSetUp extends Activity {
         }
     };
 
-    //failsafe if location services are not on
-    String s=getString(R.string.location_off);
-    ArrayList<String> failsafe = new ArrayList<String>();
+
 
     //Set up for Menu everywhere but Main Activity
     @Override

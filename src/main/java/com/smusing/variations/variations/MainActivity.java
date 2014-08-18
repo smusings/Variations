@@ -38,6 +38,10 @@ public class MainActivity extends LocationSetUp {
 
     ListView lView;
 
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +50,11 @@ public class MainActivity extends LocationSetUp {
         //set up Factual Query
         FactualRetrievalTask task = new FactualRetrievalTask();
 
-        //set up location update
-        locationManager.requestLocationUpdates(provider, 2000, 10,
-                locationListener);
 
         //ask for all places within the nearest 5000 meters, with a built in Check for Location Servicesturned on.
-        if (l != null) {
+        if (getLocation() != null) {
             Query q = new Query()
-                    .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                    .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))
                     .sortAsc("$distance")
                     .only("name", "address", "cuisine")
                     .limit(25);
@@ -65,6 +66,10 @@ public class MainActivity extends LocationSetUp {
 
         }
     }
+
+
+
+
 
     //Location changed checker
     public void onLocationChanged(Location l) {
@@ -107,14 +112,17 @@ public class MainActivity extends LocationSetUp {
             final ArrayList<String> list = new ArrayList<String>();
             //array for NAME only
             final ArrayList<String> lname = new ArrayList<String>();
-            //array for cuisine
-            final ArrayList<String> cuisine = new ArrayList<String>();
 
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
                     //the setup
                     String name = (String) restaurant.get("name");
                     String address = (String) restaurant.get("address");
+
+
+                    //array for cuisine
+                    //have to leave it in here or else the list just adds up
+                    final ArrayList<String> cuisine = new ArrayList<String>();
 
                     //the cuisine is in an array
                     JSONArray cusine = (JSONArray) restaurant.get("cuisine");
@@ -184,10 +192,8 @@ public class MainActivity extends LocationSetUp {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-                    locationManager.requestLocationUpdates(provider, 2000, 10,
-                            locationListener);
 
-                    if (l !=null) {
+                    if (getLocation() !=null) {
                         Object obj = nArray[position];
 
                         Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
@@ -226,18 +232,16 @@ public class MainActivity extends LocationSetUp {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //Location setup
-        locationManager.requestLocationUpdates(provider, 2000, 10,
-                locationListener);
+
 
         FactualRetrievalTask task = new FactualRetrievalTask();
 
         switch (item.getItemId()) {
             case R.id.refresh:
                 //clone of OnCreate. Find a new way of doing this!!!
-                if (l != null) {
+                if (getLocation() != null) {
                     Query q = new Query()
-                            .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                            .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))
                             .sortAsc("$distance")
                             .only("name", "address", "cuisine")
                             .limit(25);

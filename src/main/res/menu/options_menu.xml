@@ -3,14 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.smusing.variations.variations.MainActivity" >
-    <item android:id="@+id/about"
+    <item
+        android:id="@+id/about"
+        android:icon="@drawable/ic_action_help"
         android:title="@string/about"/>
     <item
+        android:icon="@drawable/ic_action_refresh"
         android:id="@+id/refresh"
         android:title="@string/refresh"/>
-    <item android:id="@+id/search"
+    <item
+        android:icon="@drawable/abc_ic_search"
+        android:id="@+id/search"
         android:title="@string/search"
-        app:showAsAction="collapseActionView|ifRoom"
+        android:showAsAction="ifRoom|collapseActionView"
         android:actionViewClass="android.widget.SearchView" />
 
 </menu>
