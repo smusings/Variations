@@ -1,13 +1,16 @@
 package com.smusing.variations.variations.tests;
 
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.TouchUtils;
 import android.test.ViewAsserts;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.view.View;
 import android.widget.ListView;
 
 import com.smusing.variations.variations.MainActivity;
+import com.smusing.variations.variations.PlaceInfo;
 import com.smusing.variations.variations.R;
 
 public class MainActivityTest
@@ -15,6 +18,7 @@ public class MainActivityTest
 
     private MainActivity mMainActivity;
     private ListView mMainActivityListView;
+    private static final int TIMEOUT_IN_MS = 5000;
 
     public MainActivityTest(){
         super(MainActivity.class);
@@ -50,5 +54,25 @@ public class MainActivityTest
         ViewAsserts.assertOnScreen(listView, mMainActivityListView);
         assertTrue(View.GONE==mMainActivityListView.getVisibility());
     }
+
+    @MediumTest
+    public void testSendMessage(){
+        //sets up activity monitor
+        Instrumentation.ActivityMonitor receiverAM=
+                getInstrumentation().addMonitor(PlaceInfo.class.getName(),null, false);
+
+        //validate receiver is starting
+        TouchUtils.clickView(this, mMainActivityListView);
+        PlaceInfo receiverActivity=(PlaceInfo)
+                receiverAM.waitForActivityWithTimeout(TIMEOUT_IN_MS);
+        assertNotNull("Receiver activity is null", receiverActivity);
+        assertEquals("Monitor for the RA is not called", 1, receiverAM.getHits());
+        assertEquals("Activity is of wrong type", PlaceInfo.class, receiverActivity.getClass());
+
+        //remove activity monitor
+        getInstrumentation().removeMonitor(receiverAM);
+
+    }
+
 
 }

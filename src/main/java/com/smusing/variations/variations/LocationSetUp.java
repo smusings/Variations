@@ -43,8 +43,7 @@ public class LocationSetUp extends Activity {
 
 
     //Enables Factual
-    Factual factual = new Factual("",
-            "");
+    Factual factual = new Factual("","");
 
     /*
         Uses the following criteria to decide what the best Location Provider is

@@ -2,8 +2,6 @@ package com.smusing.variations.variations;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,12 +31,6 @@ public class PlaceInfo extends LocationSetUp {
         //set up Factual
         FactualRetrievalTask task=new FactualRetrievalTask();
 
-        //set up location
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String provider=locationManager.getBestProvider(newCriteria(), true);
-        Location l = locationManager.getLastKnownLocation(provider);
-        locationManager.requestLocationUpdates(provider, 2000, 10,
-                locationListener);
 
         //ask for all places within the nearest x meters.
         Intent intent = getIntent();
@@ -47,7 +39,7 @@ public class PlaceInfo extends LocationSetUp {
         //query, simple because MainActivity already checks for location as it is
         Query q = new Query()
                 .field("name").isEqual(message)
-                .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
+                .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))
                 .sortAsc("$distance")
                 .only("name", "address","address_extended", "locality", "region", "postcode", "tel", "website")
                 .limit(25);
