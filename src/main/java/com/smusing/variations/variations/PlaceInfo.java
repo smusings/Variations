@@ -46,7 +46,7 @@ public class PlaceInfo extends LocationSetUp {
         task.execute(q);
     }
 
-    //view map intent to send the intent from MainActivity to PlaceMaps (Look for a better way!)
+    //view map intent to send the intent from MainActivity to PlaceMaps in terms of the name string
     public void viewMap(View view){
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
@@ -87,7 +87,10 @@ public class PlaceInfo extends LocationSetUp {
                     final String zip=(String) restaurant.get("postcode");
                     final String state=(String) restaurant.get("region");
                     lname.add(name);
+
                     //logic to display results
+                    //since not all the info can always be shown, we have to take
+                    //precautions via if/else
                     if (phone != null && !phone.isEmpty()) {
                         if (address != null && !address.isEmpty()) {
                             if (addresse!=null && !address.isEmpty()) {
@@ -108,6 +111,8 @@ public class PlaceInfo extends LocationSetUp {
                     } else {
                         list.add("Phone Number: None listed." + "\nAddress: None listed"+ "\nWebsite: None Listed");
                     }
+
+
                     //set up to bind results to array to listview
                     final String[] array=new String[list.size()];
                     final String[] nArray=new String[lname.size()];
@@ -115,6 +120,7 @@ public class PlaceInfo extends LocationSetUp {
                     list.toArray(array);
                     lname.toArray(nArray);
 
+                    //our own array adapter for a custom listview layout
                     class MySimpleArrayAdapter extends ArrayAdapter<String> {
                         private final Context context;
 
@@ -127,6 +133,8 @@ public class PlaceInfo extends LocationSetUp {
                         public View getView(int position, View convertView, ViewGroup parent) {
                             LayoutInflater inflater=(LayoutInflater)context.
                                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            //inflates the view, binds the textviews to the view
+                            //tells the textviews what to display based on position
                             View rView=inflater.inflate(R.layout.row, parent, false);
                             TextView textView=(TextView) rView.findViewById(R.id.secondLine);
                             TextView tView=(TextView) rView.findViewById(R.id.thirdLine);

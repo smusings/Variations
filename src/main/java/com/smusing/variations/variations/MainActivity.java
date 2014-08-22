@@ -35,12 +35,8 @@ public class MainActivity extends LocationSetUp {
     //String to help intents send along info
     public final static String EXTRA_MESSAGE = "com.smusing.variations.variations.OBJ";
 
-
+    //the listview we use to show all the data received from factual
     ListView lView;
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +56,10 @@ public class MainActivity extends LocationSetUp {
                     .limit(25);
             task.execute(q);
         } else {
+            //triggers the failsafe
             failsafe.add(s);
             lView = (ListView) findViewById(R.id.display_messages);
             lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, failsafe));
-
         }
     }
 
@@ -113,19 +109,22 @@ public class MainActivity extends LocationSetUp {
             //array for NAME only
             final ArrayList<String> lname = new ArrayList<String>();
 
+            //i do it this way so that the name can be used to trigger an intent
+
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
                     //the setup
                     String name = (String) restaurant.get("name");
                     String address = (String) restaurant.get("address");
 
-
                     //array for cuisine
                     //have to leave it in here or else the list just adds up
+                    //and you have a pizza place that serves tacos,sushi, and cupcakes
                     final ArrayList<String> cuisine = new ArrayList<String>();
 
                     //the cuisine is in an array
                     JSONArray cusine = (JSONArray) restaurant.get("cuisine");
+                    //if cuisine is there get the length, add it to string based off location
                     if (cusine != null) {
                         int len = cusine.length();
                         for (int i = 0; i < len; i++) {
@@ -137,6 +136,7 @@ public class MainActivity extends LocationSetUp {
                         }
                     }
                     //we break the cuisine format into a more readable format
+                    //otherwise you get [pizza, pasta, wings]
                     String cuisine_string=cuisine.toString().replace("[","").replace("]","");
 
                     //logic and display
@@ -162,6 +162,7 @@ public class MainActivity extends LocationSetUp {
             list.toArray(array);
             lname.toArray(nArray);
 
+            //sets up a custom array adapter to display the data in a list view
             class MySimpleArrayAdapter extends ArrayAdapter<String> {
                 private final Context context;
 
@@ -188,11 +189,13 @@ public class MainActivity extends LocationSetUp {
             lView.setAdapter(new MySimpleArrayAdapter(MainActivity.this, array));
 
             //setting up the onClick to display more information
+            //this triggers the next activity to do a search based off name, see PlaceInfo for more
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
 
-
+                    //if location is not null, get the object from the array based off position
+                    //start an activity via intent and sending
                     if (getLocation() !=null) {
                         Object obj = nArray[position];
 
@@ -238,7 +241,7 @@ public class MainActivity extends LocationSetUp {
 
         switch (item.getItemId()) {
             case R.id.refresh:
-                //clone of OnCreate. Find a new way of doing this!!!
+                //refreshes the list if location is found
                 if (getLocation() != null) {
                     Query q = new Query()
                             .within(new Circle(getLocation().getLatitude(), getLocation().getLongitude(), 5000))

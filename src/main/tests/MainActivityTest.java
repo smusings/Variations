@@ -1,7 +1,6 @@
 package com.smusing.variations.variations.tests;
 
 import android.app.Instrumentation;
-import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.TouchUtils;
 import android.test.ViewAsserts;
@@ -16,6 +15,7 @@ import com.smusing.variations.variations.R;
 public class MainActivityTest
         extends ActivityInstrumentationTestCase2<MainActivity> {
 
+    //set up for all we need
     private MainActivity mMainActivity;
     private ListView mMainActivityListView;
     private static final int TIMEOUT_IN_MS = 5000;
@@ -28,16 +28,13 @@ public class MainActivityTest
     @Override
     protected void setUp() throws Exception{
         super.setUp();
-
+        //sets up touch mode for clicks
         setActivityInitialTouchMode(true);
 
-        Intent intent=new Intent(getInstrumentation().getTargetContext(),
-                MainActivity.class);
-
+        //defines some items from setup
         mMainActivity=getActivity();
         mMainActivityListView=
                 (ListView) mMainActivity.findViewById(R.id.display_messages);
-
     }
 
     //make sure everythign is working and there
@@ -55,6 +52,10 @@ public class MainActivityTest
         assertTrue(View.GONE==mMainActivityListView.getVisibility());
     }
 
+    /*
+        currently fails, but i think that is because it needs a better
+        command to click on specific listviews items
+     */
     @MediumTest
     public void testSendMessage(){
         //sets up activity monitor

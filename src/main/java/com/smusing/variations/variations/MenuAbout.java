@@ -11,6 +11,7 @@ public class MenuAbout extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_about);
 
+        //gets the text view and displays the about
         TextView tView=(TextView)findViewById(R.id.about);
         Linkify.addLinks(tView, Linkify.ALL);
         String about=(

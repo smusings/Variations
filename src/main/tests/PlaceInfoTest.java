@@ -93,6 +93,4 @@ public class PlaceInfoTest
         //remove the activity monitor
         getInstrumentation().removeMonitor(receiverAM);
     }
-
-
 }

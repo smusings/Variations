@@ -23,10 +23,7 @@ public class LocationSetUp extends Activity {
         sets up the LocationManager and the services
         then we get the best provider (GPS, provider, etc)
         then we define location so we can use it in methods that dont call for it specifically
-
-
     */
-
     public Location getLocation() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManager.getBestProvider(newCriteria(), true);
@@ -34,10 +31,10 @@ public class LocationSetUp extends Activity {
         locationManager.requestLocationUpdates(provider, 2000, 10,
                 locationListener);
 
-
         return l;
     }
     //failsafe if location services are not on
+    //you call the string if a location isn't found
     String s="Please Turn on your Location Services, and hit refresh after a few seconds";
     ArrayList<String> failsafe = new ArrayList<String>();
 
