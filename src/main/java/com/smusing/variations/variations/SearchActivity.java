@@ -1,17 +1,13 @@
 package com.smusing.variations.variations;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.factual.driver.Circle;
 import com.factual.driver.Query;
@@ -133,30 +129,9 @@ public class SearchActivity extends LocationSetUp {
             list.toArray(array);
             lname.toArray(nArray);
 
-            class MySimpleArrayAdapter extends ArrayAdapter<String> {
-                private final Context context;
-
-                public MySimpleArrayAdapter(Context context, String[] values) {
-                    super(context, R.layout.row, values);
-                    this.context = context;
-                }
-
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    LayoutInflater inflater = (LayoutInflater) context.
-                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View rView = inflater.inflate(R.layout.row, parent, false);
-                    TextView textView = (TextView) rView.findViewById(R.id.secondLine);
-                    TextView tView = (TextView) rView.findViewById(R.id.thirdLine);
-                    textView.setText(nArray[position]);
-                    tView.setText(array[position]);
-                    return rView;
-                }
-            }
-
             //setting it up to show results
             lView = (ListView) findViewById(R.id.search_results);
-            lView.setAdapter(new MySimpleArrayAdapter(SearchActivity.this, array));
+            lView.setAdapter(new MySimpleArrayAdapter(SearchActivity.this, array, nArray));
 
             //setting it up for more info
             lView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -2,7 +2,6 @@ package com.smusing.variations.variations;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.factual.driver.Factual;
 
@@ -34,13 +32,12 @@ public class LocationSetUp extends Activity {
         return l;
     }
     //failsafe if location services are not on
-    //you call the string if a location isn't found
-    String s="Please Turn on your Location Services, and hit refresh after a few seconds";
+    String s = "Please Turn on your Location Services, and hit refresh after a few seconds";
     ArrayList<String> failsafe = new ArrayList<String>();
 
 
     //Enables Factual
-    Factual factual = new Factual("","");
+    Factual factual = new Factual("", "");
 
     /*
         Uses the following criteria to decide what the best Location Provider is
@@ -56,9 +53,9 @@ public class LocationSetUp extends Activity {
         return c;
     }
 
-    public void updatedWithNewLocation(Location location) {
+    public void updatedWithNewLocation(Location l) {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location l = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        l = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
     }
 
     //Location Listener
@@ -87,17 +84,4 @@ public class LocationSetUp extends Activity {
 
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.about:
-                Intent aboutent=new Intent(this, MenuAbout.class);
-                startActivity(aboutent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 }

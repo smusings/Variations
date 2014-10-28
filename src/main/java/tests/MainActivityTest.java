@@ -1,4 +1,4 @@
-package com.smusing.variations.variations.tests;
+package tests;
 
 import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;

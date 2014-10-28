@@ -3,20 +3,16 @@ package com.smusing.variations.variations;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.factual.driver.Circle;
 import com.factual.driver.Query;
@@ -30,13 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class MainActivity extends LocationSetUp {
     //String to help intents send along info
     public final static String EXTRA_MESSAGE = "com.smusing.variations.variations.OBJ";
-
-    //the listview we use to show all the data received from factual
     ListView lView;
+    FactualRetrievalTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +38,7 @@ public class MainActivity extends LocationSetUp {
         setContentView(R.layout.activity_main);
 
         //set up Factual Query
-        FactualRetrievalTask task = new FactualRetrievalTask();
-
+        task = new FactualRetrievalTask();
 
         //ask for all places within the nearest 5000 meters, with a built in Check for Location Servicesturned on.
         if (getLocation() != null) {
@@ -62,24 +55,6 @@ public class MainActivity extends LocationSetUp {
             lView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, failsafe));
         }
     }
-
-
-
-
-
-    //Location changed checker
-    public void onLocationChanged(Location l) {
-        FactualRetrievalTask task = new FactualRetrievalTask();
-        if (l != null) {
-            Query q = new Query()
-                    .within(new Circle(l.getLatitude(), l.getLongitude(), 5000))
-                    .sortAsc("$distance")
-                    .only("name", "address", "cuisine")
-                    .limit(25);
-            task.execute(q);
-        }
-    }
-
 
     //Performs the Query in the background
     private class FactualRetrievalTask extends AsyncTask<Query, Integer, List<ReadResponse>> {
@@ -104,16 +79,12 @@ public class MainActivity extends LocationSetUp {
         @Override
         protected void onPostExecute(List<ReadResponse> responses) {
 
-            //array for ALL the info
-            final ArrayList<String> list = new ArrayList<String>();
-            //array for NAME only
-            final ArrayList<String> lname = new ArrayList<String>();
+            final ArrayList<String> list = new ArrayList<String>(); //array for all info
+            final ArrayList<String> lname = new ArrayList<String>();    //array for name only
 
             //i do it this way so that the name can be used to trigger an intent
-
             for (ReadResponse response : responses) {
                 for (Map<String, Object> restaurant : response.getData()) {
-                    //the setup
                     String name = (String) restaurant.get("name");
                     String address = (String) restaurant.get("address");
 
@@ -157,36 +128,13 @@ public class MainActivity extends LocationSetUp {
             //setting it up to display in a list view
             final String[] array = new String[list.size()];
             final String[] nArray = new String[lname.size()];
-
             //put our ArrayList results into a StringArray
             list.toArray(array);
             lname.toArray(nArray);
 
-            //sets up a custom array adapter to display the data in a list view
-            class MySimpleArrayAdapter extends ArrayAdapter<String> {
-                private final Context context;
-
-                public MySimpleArrayAdapter(Context context, String[] values) {
-                    super(context, R.layout.row, values);
-                    this.context = context;
-                }
-
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    LayoutInflater inflater = (LayoutInflater) context.
-                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View rView = inflater.inflate(R.layout.row, parent, false);
-                    TextView textView = (TextView) rView.findViewById(R.id.secondLine);
-                    TextView tView = (TextView) rView.findViewById(R.id.thirdLine);
-                    textView.setText(nArray[position]);
-                    tView.setText(array[position]);
-                    return rView;
-                }
-            }
-
             //setting it up to show results
             final ListView lView = (ListView) findViewById(R.id.display_messages);
-            lView.setAdapter(new MySimpleArrayAdapter(MainActivity.this, array));
+            lView.setAdapter(new MySimpleArrayAdapter(MainActivity.this, array, nArray));
 
             //setting up the onClick to display more information
             //this triggers the next activity to do a search based off name, see PlaceInfo for more
@@ -198,11 +146,10 @@ public class MainActivity extends LocationSetUp {
                     //start an activity via intent and sending
                     if (getLocation() !=null) {
                         Object obj = nArray[position];
-
                         Intent intent = new Intent(MainActivity.this, PlaceInfo.class);
                         intent.putExtra(EXTRA_MESSAGE, obj.toString());
                         startActivity(intent);
-                    }else {
+                    } else {
                         failsafe.add(s);
                         final ListView lView = (ListView) findViewById(R.id.display_messages);
                         lView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, failsafe));
@@ -230,15 +177,8 @@ public class MainActivity extends LocationSetUp {
         return true;
     }
 
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-
-        FactualRetrievalTask task = new FactualRetrievalTask();
-
         switch (item.getItemId()) {
             case R.id.refresh:
                 //refreshes the list if location is found
